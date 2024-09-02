@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./main.css">
+    <script type="module" src="./Js/main.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui@5.0.15/material-ui.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2/dist/sweetalert2.min.js"></script>
+    <!-- CSS de flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- JS de flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <title>Portal de pacientes</title>
+</head>
+<body>
+    <div class="alert" style="display: none;">
+        <img id="alert_icon" src="./img/success.png" class="alert-icon">
+        <p id="alert_p">Se actualizó correctamente la información de Perfil.</p>
+    </div>
+
+    <div class="container-window-registro" id="formularioObraSocial" style="display: none">
+        <span class="window-registro">
+                <span class="title-box-registro">Formulario Cobertura Médica</span>
+                <span class="subtitle-box-registro" id="subtitle_box_registro">Para ingresar por primera vez, complete información de su seguro médico</span>
+                <label class="label-nombre" for="nombre"><b>Nombre</b>:
+                <input type="text" class="input-registro" id="registro-nombre" name="nombre" placeholder="Ingrese Nombre..." value="" required>
+                </label>
+                <label class="label-apellido" for="apellido"><b>Apellido</b>:
+                <input type="text" class="input-registro" id="registro-apellido" name="apellido" placeholder="Ingrese Apellido..." value="" required>
+                </label>
+                <label class="label-dni" for="dni"><b>DNI</b>:
+                <input type="text" maxlength="8" minlength="8" class="input-registro dniJs" id="registro-dni" name="dni" placeholder="Ingrese DNI..." value="" required>
+                </label>
+                <label class="label-mail" for="mail"><b>Mail</b>:
+                <input type="email" class="input-registro" id="registro-email" name="mail" placeholder="Ingrese Mail..." value="" required>
+                </label>
+                <label class="label-telefono" for="telefono"><b>Teléfono</b>:
+                <input type="number" class="input-registro" id="registro-telefono" name="telefono" placeholder="Ingrese Teléfono..." value="" required>
+                </label>
+                <label class="label-celular" for="celular"><b>Celular</b>:
+                <input type="number" class="input-registro" id="registro-celular" name="ceular" placeholder="Ingrese Celular" value="" required>
+                </label>
+                <label class="label-obra-social" for="obra-social"><b>Obra Social</b>:
+                <select class="select-registro" id="registro-obraSocial" name="obra-social" required></select>
+                </label>
+                <label class="label-plan" for="plan"><b>Plan</b>:
+                <select class="select-registro" id="registro-plan" name="plan" required>
+                    <option disabled>Seleccione una Obra Social para ver Planes</option>
+                </select>
+                </label>
+                <label class="label-nro-afiliado" for="nro-afiliado"><b>Número de Afiliado</b>:
+                <input type="text" class="input-registro" id="registro-numeroAfiliado" name="nro-afiliado" placeholder="ingrese nro de afiliado" required>
+                </label>
+                <button class="boton-registro" id="cargarDatos">Cargar Datos</button>
+                <span class="boton-registro-ok" id="ok-registrarme" style="display: none;">
+                    <img class="registro-confirmar" src="./css/img/confirmar.png">
+                </span>
+                <button class="boton-registro-loader" id="loader-registrarme" style="display: none;">
+                    <div class="spinner center">
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                        <div class="spinner-blade"></div>
+                    </div>
+                </button>
+            </span>
+    </div>
+
+    <div class="layout">
+        <div class="header d-flex justify-content-between align-items-center">
+            <a class="header-logo-container"><img class="header-logo" id="logo"></a>
+            <span class="header-menu d-flex align-items-center">
+                <span id="header_paciente_data"></span>
+                <!-- Icono de notificaciones -->
+                <div class="dropdown" style="margin: 0 40px;">
+                    <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="dropdownNotifications" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-bell" style="font-size:24px;"></i>
+                        <span class="badge bg-danger rounded-pill ms-1" id="notification-count">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownNotifications" id="notification-menu">
+                        <li><p class="dropdown-item text-center text-muted">No hay nuevas notificaciones</p></li>
+                    </ul>
+                </div>
+                <span id="header_title">Inicio</span>
+
+                <input type="checkbox" id="btn-menu">
+                <label for="btn-menu"><img class="hamburger" src="./img/angulo-hacia-abajo.png"></label>
+                <nav class="menu" id="header_menu">
+                    <ul>
+                        <li id="header_menu_inicio"><img src="./img/inicio-icon.png">Inicio</li>
+                        <li id="header_menu_miPerfil"><img src="./img/miPerfil-icon.png">Mi Perfil</li>
+                        <li id="header_menu_misTurnos"><img src="./img/misTurnos-icon.png">Mis Turnos</li>
+                        <li id="header_menu_misEstudios"><img src="./img/misEstudios-icon.png">Mis Estudios</li>
+                        <li id="header_menu_misCirugias" style="display: none;"><img src="./img/misCirugias_icon.png">Autorización de Cirugías</li>
+                        <li id="header_menu_misAutorizaciones" style="display: none;"><img src="./img/misAutorizaciones-icon.png">Autorización de Estudios</li>
+                        <li><img src="./img/cargarDocumentos-icon.png">Autorizaciones y documentos</li>
+                        <li id="header_menu_misTramitesyRecetas" style="display: none;">Mis Trámites y Recetas</li>
+                        <li id="header_menu_cerrarSesion"><img src="./img/cerrarSesion-icon.png">Cerrar Sesión</li>
+                    </ul>
+                </nav>
+            </span>
+        </div>
+
+        <div class="aside-menu">
+            <div class="aside-menu-option" id="aside-menu-option_inicio">Inicio</div>
+            <div class="aside-menu-option" id="aside-menu-option_miPerfil">Mi Perfil</div>
+            <div class="aside-menu-option" id="aside-menu-option_misAutorizaciones" style="display: none;"><img style="display: none;" class="img-submenu-angle" id="submenu-angle-autorizaciones" src="./img/angulo-hacia-abajo.png">Autorizaciones</div>
+            <ul class="aside-menu-ul" id="ul-autorizaciones" style="display: none;">
+                <li id="autorizaciones_estudios">Estudios</li>
+                <li id="autorizaciones_cirugias">Cirugías</li>
+            </ul>
+            <div class="aside-menu-option" id="aside-menu-option_misTurnos">Mis Turnos</div>
+            <div class="aside-menu-option" id="aside-menu-option_misCirugias" style="display: none;">Autorizaciones</div>
+            <div class="aside-menu-option" id="aside-menu-option_misEstudios">Mis Estudios</div>
+            <div class="aside-menu-option">Autorizaciones y documentos</div>
+            <div class="aside-menu-option" id="aside-menu-option_misTramitesyRecetas" style="display: none;">Mis Trámites y Recetas</div>
+        </div>
+
+        <div class="aside-video" id="mobile_video"></div>
+
+        <div class="aside-video" id="asideVideo">
+            <div class="tarjetas-container" style="box-shadow: 0 2px 8px rgb(44, 193, 109, 0.4); border: 1px solid #2cc16d; display: none;" id="sala_espera_activa">
+                <h2 style="display: flex; align-items: center;">&nbsp;<span class="icono-dot" style="background-color: #38c976; margin: 0 20px 0 0.5em;"></span>Sala de Espera</h2>
+                <div class="container-items-sala-espera">
+                    <div class="container-item-sala-espera">
+                        <h3 style="text-align: center;">NÚMERO DE TURNO</h3>
+                        <div id="codigoSalaEspera" class="codigo-sala-espera">C134</div>
+                    </div>
+                    <div class="container-item-sala-espera" style="flex-direction: row;">
+                        <div id="pacientesEspera" class="codigo-sala-espera" style="color: #2195F3; font-size: 28px; padding: 2px 10px 0 10px; border: 1px solid lightgray; border-radius: 10px; margin-right: 10px;">9</div>
+                        <h3 style="text-align: center;">&nbsp;&nbsp;PACIENTES ANTES DE USTED</h3>
+                    </div>
+                </div>
+                <div id="tarjetaTurno" class="tarjeta-turnos" style="margin: 1em; width: calc(100% - 2em); border: 1px solid lightgray;">
+                    <div class="doctor-container">
+                        <h3 id="nombreProfesional">Dr. Marcos Rodriguez</h3>
+                        <span class="icono-turnos-container">
+                            <img src="./img/mas.png" style="opacity: 0.6; width: 1em;">
+                        </span>
+                    </div>
+                    <div class="container-fecha-hora-confirmacion">
+                        <span id="fechaTurno" class="container-icono-info"><img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">23/03/2024</span>
+                        <span id="horaTurno" class="container-icono-info"><img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">10:30 Hs</span>
+                        <span id="sedeTurno" class="container-icono-info"></span>
+                        <span id="direccionTurno" class="container-icono-info"></span>
+                    </div>
+                    <div class="container-buttons">
+                        <button class="gray-button">CANCELAR</button>
+                        <button class="blue-button">CONFIRMAR</button>
+                    </div>
+                </div>
+            </div>            
+            <div class="tarjetas-container" id="proximos-turnos-hoy" style="display: none;">
+                <h2>Próximos turnos hoy</h2>
+                <!-- <div class="tarjeta-turnos" id="turno_1" style="margin: 1em; width: calc(100% - 2em);">
+                    <div class="doctor-container">
+                        <h3 id="doctorNombre_1">Dr. Marcos Rodriguez</h3>
+                        <span class="icono-turnos-container">
+                            <img id="iconoMas_1" src="./img/mas.png" style="opacity: 0.6; width: 1em;">
+                        </span>
+                    </div>
+                    <div class="container-fecha-hora-confirmacion">
+                        <span class="container-icono-info" id="fechaTurno_1">
+                            <img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">23/03/2024
+                        </span>
+                        <span class="container-icono-info" id="horaTurno_1">
+                            <img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">10:30 Hs
+                        </span>
+                        <span class="container-icono-info" id="estadoTurno_1">
+                            <span class="icono-dot" id="iconoDot_1" style="background-color: #2cc16d;"></span>Confirmado
+                        </span>
+                    </div>
+                    <div class="container-buttons" id="containerButtons_1">
+                        <button class="gray-button" id="cancelarButton_1">CANCELAR</button>
+                        <button class="blue-button" id="confirmarButton_1">CONFIRMAR</button>
+                    </div>
+                </div> -->
+            </div>            
+            <div class="tarjetas-container" id="sala_espera_inactiva">
+                <h2 class="titulo">Sala de Espera</h2>
+                <div class="tarjeta-home-sala-espera">
+                    <span class="dot-texto-sala-espera">
+                        <span class="icono-dot" style="background-color: #c93838; margin-right: 1em; width: 12px; height: 12px; display: inline-block; border-radius: 50%;"></span>
+                        <h3 class="subtitulo" style="display: inline-block; margin: 0;">Inactiva</h3>
+                        <!-- Icono de información -->
+                        <span class="info-icon" style="cursor: pointer; margin-left: 10px;" onclick="mostrarInfo()">?</span>
+                    </span>
+                    <p>Programada para el 23/11/2024 a las 9:30 hs.</p>
+                </div>
+                <!-- Ventana emergente de información -->
+                <div id="info-popup" class="info-popup" style="display: none; border: 1px solid #ccc; padding: 20px; background-color: #f9f9f9; position: absolute; top: 100px; left: 50%; transform: translateX(-50%); box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); width: 80%; max-width: 500px; z-index: 10;">
+                    <p><strong>Aviso Importante:</strong> Sala de Espera Inactiva</p>
+                    <p>La sala de espera está actualmente inactiva. Esto es normal si intenta acceder fuera del horario de su turno. La sala se activará automáticamente en la fecha y hora de su próximo turno. En ese momento, podrá visualizar toda la información relacionada con su cita, incluyendo el horario aproximado de atención y el número de pacientes que serán atendidos antes que usted. ¡Gracias por su atención!</p>
+                    <button onclick="cerrarInfo()" style="margin-top: 10px; padding: 5px 10px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">Cerrar</button>
+                </div>
+            </div>          
+            <div class="tarjetas-container" id="proximoTurnoContainer" style="display: none;">
+                <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                    <h2 class="titulo">Su próximo turno</h2>
+                    <a class="enlace" id="ver_turnos">Ver todos (3)</a>
+                </div>
+                <div class="tarjeta-turnos" id="tarjetaProximoTurno">
+                    <div class="doctor-container">
+                        <h3 class="subtitulo" id="nombreProfesionalProximoTurno">Dr. Eugenio Banfield</h3>
+                        <span class="icono-turnos-container" id="desplegar_turno_extra_info">
+                            <img id="desplegar_turno_extra_info_icon" src="./img/mas.png" style="opacity: 0.6; width: 1em;">
+                        </span>
+                    </div>
+                    <div class="container-fecha-hora-confirmacion">
+                        <span class="container-icono-info" id="fechaProximoTurno">
+                            <img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">23/03/2024
+                        </span>
+                        <span class="container-icono-info" id="horaProximoTurno">
+                            <img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">10:30 Hs
+                        </span>
+                        <span class="container-icono-info" id="estadoProximoTurno">
+                            <span class="icono-dot"></span>Sin confirmar
+                        </span>
+                    </div>
+                    <div class="container-fecha-hora-confirmacion" id="turno_extra_info" style="display: none;">
+                        <span class="container-icono-info-100" id="infoExtraProximoTurno">
+                            <img src="./img/clinic.png" style="width: 17px; margin: 0 7px 7px 2px;">Balcarce 286, CABA.<br>2do Piso, Consultorio 6.<br>(011) 4576 8954
+                        </span>
+                    </div>
+                    <div class="container-buttons">
+                        <button class="gray-turno-button">CANCELAR</button>
+                        <button class="blue-turno-button">CONFIRMAR</button>
+                    </div>
+                </div>
+                <button class="big-blue-button" id="obtener_nuevo_turno">Obtener un nuevo turno</button>
+            </div>            
+            <div id="tarjetaEstudiosContainer" class="tarjetas-container">
+                <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                    <h2 class="titulo">Nuevos estudios</h2>
+                    <a class="enlace" id="ver_estudios">Ver todos (5)</a>
+                </div>
+                <div class="tarjeta-estudios">
+                    <div style="display: flex; align-items: center;">
+                        <img src="./img/cruzar.png" style="width: 14px; height: 14px; margin: 0 10px 2px 0;">
+                        <p class="texto">No posee nuevos estudios cargados.</p>
+                    </div>
+                </div>
+            </div>            
+            <!-- <div class="tarjetas-container">
+                <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                    <h2 class="titulo">Nuevas recetas</h2>
+                    <a class="enlace" id="ver_recetas">Ver todas (5)</a>
+                </div>
+                <div class="tarjeta-estudios">
+                    <div>
+                        <p class="texto">23/04/2024</p>
+                        <h3 class="subtitulo">Latanoprost</h3>
+                    </div>
+                    <button class="blue-button">ABRIR</button>
+                </div>
+            </div> -->
+        </div>
+        <div class="main-content" id="inicio">
+            <h1 id="welcome_name"></h1>
+            <div class="main-content-buttons">
+                <span class="main-content-buttons_button" id="inicio_perfil_button">
+                    <p>Mi Perfil</p>
+                    <img src="./img/perfil_blue.png">
+                </span>
+                <span class="main-content-buttons_button" id="inicio_turnos_button">
+                    <p>Mis Turnos</p>
+                    <img src="./img/turnos_blue.png">
+                </span>
+                <span class="main-content-buttons_button" id="inicio_estudios_button">
+                    <p>Mis Estudios</p>
+                    <img src="./img/estudios_blue.png">
+                </span>
+                <span class="main-content-buttons_button" id="inicio_cirugias_button" style="display: none;">
+                    <p>Autorización<br>de Cirugias</p>
+                    <img src="./img/autorizacion_cirugias_blue.png">
+                </span>
+                <span class="main-content-buttons_button" id="inicio_autorizaciones_button" style="display: none;">
+                    <p>Autorización<br>de Estudios</p>
+                    <img src="./img/autorizacion_estudios_blue.png">
+                </span>
+                <span class="main-content-buttons_button">
+                    <p>Autorizaciones<br>y documentos</p>
+                    <img src="./img/cargar_documentos_blue.png">
+                </span>
+            </div>
+            <div class="main-content-search" style="display: none;">
+                <h3>¿Qué estás buscando?</h3>
+                <div class="main-content-search_container">
+                    <img src="./img/search.png">
+                    <input type="text" value="." autocomplete="off"></input>
+                </div>
+            </div>
+        </div>
+
+        <!-- MI PERFIL -->
+        <div class="mi-perfil" id="miPerfil" style="display: none;">
+            <h3>Mi Perfil</h3>
+            <div class="mi-perfil_container"> 
+                <h2 id="miPerfil_nombre"></h2>
+                <span class="mi-perfil-item">
+                    <span>Historia clínica:&nbsp;</span>
+                    <input id="miPerfil_hc" class="miPerfil_input" type="text" value="" disabled></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>DNI&nbsp;</span>
+                    <input id="miPerfil_dni" class="miPerfil_input" type="text" value="" disabled></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Fecha de nacimiento&nbsp;</span>
+                    <input id="miPerfil_fechaNacimiento" class="miPerfil_input" type="date" value="" disabled></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Género&nbsp;</span>
+                    <input id="miPerfil_genero" class="miPerfil_input" disabled></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Cobertura médica&nbsp;</span>
+                    <select id="miPerfil_coberturaMedica" class="miPerfil_input" disabled style="opacity: 1; -webkit-appearance: none; /* Oculta la flecha en navegadores webkit (Safari, Chrome) */
+                    -moz-appearance: none;
+                    appearance: none;"></select>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Número de afiliado&nbsp;</span>
+                    <input id="miPerfil_afiliado" class="miPerfil_input" type="text" value="" disabled></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Domicilio&nbsp;</span>
+                    <input id="miPerfil_domicilio" class="miPerfil_input" type="text" value="" style="border: 1px solid lightgray; padding: 0 10px; border-radius: 5px;"></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Teléfono celular&nbsp;</span>
+                    <input id="miPerfil_celular" class="miPerfil_input" type="text" value="" style="border: 1px solid lightgray; padding: 0 10px; border-radius: 5px;"></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Teléfono fijo&nbsp;</span>
+                    <input id="miPerfil_telefono" class="miPerfil_input" type="text" value="" style="border: 1px solid lightgray; padding: 0 10px; border-radius: 5px;"></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>E-mail&nbsp;</span>
+                    <input id="miPerfil_email" class="miPerfil_input" type="mail" value="" style="border: 1px solid lightgray; padding: 0 10px; border-radius: 5px;"></input>
+                </span>
+                <span class="mi-perfil-item">
+                    <span>Contraseña&nbsp;</span>
+                    <div class="container-password">
+                        <input class="miPerfil_input" id="miPerfil_password" type="password" placeholder="Contraseña">
+                        <img id="showhide_password" src="./img/hide.png">
+                    </div>
+                </span>
+                <span class="mi-perfil-item" style="display: none;">
+                    <span>Nro. Historia Clínica&nbsp;</span>
+                    <input id="miPerfil_hc" class="miPerfil_input" type="text" value="" disabled></input>
+                </span>
+                <button id="cambiar-datos" disabled style="display: none;">Actualizar datos</button>
+            </div>
+        </div>
+
+        <!-- MIS TURNOS -->
+        <div class="mis-turnos" id="misTurnos" style="display: none;">
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 600px;">
+                <h3>Mis Turnos</h3>
+                <button id="obtener-nuevo-turno">Obtener nuevo turno</button>
+            </div>
+            <div id="mis-turnos_container" class="mis-turnos_container">
+                <select id="turnos_select">
+                    <option value="todos" selected>Todos mis turnos</option>
+                    <option value="futuro">Próximos turnos</option>
+                    <option value="pasado">Historial de turnos</option>
+                </select>
+                <div id="mis-turnos_item_container" class="mis-turnos_item_container">
+                    <!-- Aquí irán los turnos cargados dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MIS ESTUDIOS -->
+        <div class="mis-estudios" id="misEstudios" style="display: none;">
+            <h3>Mis Estudios</h3>
+            <div class="mis-estudios_container" id="mis-estudios_container">
+                <span class="mis-estudios-item">
+                    <span class="mis-estudios-item_date">16/04/2023</span>
+                    <span class="mis-estudios-item_title">PENTACAM Multiforma AO</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- AUTORIZACIONES -->
+        <div class="mis-autorizaciones" id="misAutorizaciones" style="display: none;">
+            <h3>Autorización de Estudios</h3>
+            <span class="autorizaciones-container">
+                <span class="autorizaciones-container_form">
+                    <label for="input_datalist_autorizacionesEstudios">Seleccione nombre de estudio:</label>
+                    <select id="select_autorizacionesEstudios"></select>
+                    <label for="input_date_autorizacionesEstudios">Fecha programada para realización de estudio:</label>
+                    <input type="date" id="input_date_autorizacionesEstudios">
+                    <label for="input_file_autorizacionesEstudios">Adjuntar archivo:</label>
+                    <input class="input-file" type="file" id="input_file_autorizacionesEstudios">
+                    <button id="enviar_formulario_autorizacionesEstudios">Enviar</button>
+                </span>
+                <div class="list-autorizaciones_container" id="container_autorizaciones_estudios"></div>
+            </span>
+        </div>
+
+        <!-- MIS CIRUGIAS -->
+        <div class="mis-cirugias" id="misCirugias" style="display: none;">
+            <h3>Autorización de Cirugías</h3>
+            <span class="autorizaciones-container">
+                <span class="autorizaciones-container_form">
+                    <label for="input_datalist_autorizacionesCirugias">Seleccione nombre de cirugía:</label>
+                    <select id="select_autorizacionesCirugias"></select>
+                    <label for="input_date_autorizacionesCirugias">Fecha programada para realización de Cirugía:</label>
+                    <input type="date" id="input_date_autorizacionesCirugias">
+                    <label for="input_file_autorizacionesCirugias">Adjuntar archivo:</label>
+                    <input class="input-file" type="file" id="input_file_autorizacionesCirugias">
+                    <button id="enviar_formulario_autorizacionesCirugias" value="2">Enviar</button>
+                </span>
+                <div class="list-autorizaciones_container" id="container_autorizaciones_cirugias"></div>
+            </span>
+        </div>
+
+        <!-- MIS TRAMITES Y RECETAS -->
+        <div class="mis-tramitesyrecetas" id="misTramitesyRecetas" style="display: none;">
+            <h3>Mis Tramites y Recetas</h3>
+        </div>
+
+        <!-- CARGAR DOCUMENTOS -->
+        <div class="cargar-documentos" id="cargarDocumentos" style="display: none;">
+            <h3>Autorizaciones y documentos</h3>
+            <span class="autorizaciones-container">
+                <span class="autorizaciones-container_form">
+                    <label for="input_datalist_cargarDocumentos">Seleccione el nombre del documento:</label>
+                    <select id="select_cargarDocumentos"></select>
+                    <label for="input_cargarDocumentos">Archivo adjunto:</label>
+                    <input class="input-file" type="file" id="input_cargarDocumentos">
+                    <button id="enviar_formulario_cargarDocumentos">Enviar</button>
+                </span>
+                <div class="list-autorizaciones_container" id="container_documentos"></div>
+            </span>
+        </div>
+
+        <a style="display: none;"><img class="contact-us" src="./img/dialog_icon.png"></a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let Cliente_Id = getCookie('ClinicaId'); 
+            let Paciente_DNI = getCookie('PacienteDNI'); 
+        
+            // URL para obtener información de la sala de espera
+            let urlSalaEspera = "functions_tree.php?" + "Action=getSalaEsperaAdmision&Cliente_Id=" + Cliente_Id + '&Paciente_DNI=' + Paciente_DNI;
+        
+            // URL para obtener información de los turnos del paciente
+            let urlTurnos = "functions_tree.php?" + "Action=Turnos_Clinica&Cliente_Id=" + Cliente_Id + '&Paciente_DNI=' + Paciente_DNI;
+        
+            // URL para obtener estudios del paciente
+            const UrlEstudios = `functions_tree.php?Action=Estudios_Clinica&Cliente_Id=${Cliente_Id}&Paciente_DNI=${Paciente_DNI}`;
+            
+            // URL para obtener el último log del paciente
+            const urlUltimoLog = `functions_tree.php?Action=getLastLog&Cliente_Id=${Cliente_Id}&Paciente_DNI=${Paciente_DNI}`;
+        
+            // Obtener el último log del paciente
+            fetch(urlUltimoLog)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();  // Cambiar a response.text() para manejar la respuesta como texto
+                })
+                .then(dataLog => {
+                    console.log('Respuesta de último log:', dataLog); // Verifica la respuesta en la consola
+
+                    if (!dataLog) {
+                        throw new Error('UltimoLog no se encuentra en la respuesta');
+                    }
+
+                    // Limpiar la cadena de fecha eliminando comillas y espacios en blanco
+                    const cleanedDate = dataLog.trim().replace(/^"|"$/g, ''); // Remover comillas al inicio y al final
+
+                    // Convertir la respuesta directamente a un objeto Date
+                    const ultimoLogTimestamp = new Date(cleanedDate); // Usar el formato ISO 8601 directamente
+
+                    console.log('Fecha del último log convertida:', ultimoLogTimestamp); // Mostrar la fecha convertida
+
+                    // Obtener los estudios del paciente
+                    fetch(UrlEstudios)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(dataEstudios => {
+                            console.log('Respuesta de estudios:', dataEstudios); // Verifica la respuesta de estudios en la consola
+
+                            const estudiosNuevos = dataEstudios.Estudios.filter(estudio => {
+                                // Asegurarse de que la fecha y hora estén en el formato correcto
+                                const fechaHoraISO = `${estudio.Fecha}T${estudio.Hora}`; // Combinar fecha y hora
+                                const fechaEstudio = new Date(fechaHoraISO); // Convertir a objeto Date
+
+                                console.log('Comparando:', fechaEstudio, '>', ultimoLogTimestamp); // Debugging de la comparación
+
+                                if (isNaN(fechaEstudio.getTime())) {
+                                    console.error('Fecha inválida:', fechaHoraISO); // Mostrar si hay un error de fecha inválida
+                                    return false;
+                                }
+
+                                return fechaEstudio > ultimoLogTimestamp; // Filtrar estudios cargados después del último log
+                            });
+
+                            // Obtener el contenedor de estudios por su ID
+                            const tarjetaEstudiosContainer = document.getElementById('tarjetaEstudiosContainer');
+
+                            // Limpiar contenido anterior
+                            tarjetaEstudiosContainer.innerHTML = '';
+
+                            // Agregar el título y el enlace
+                            const headerHTML = `
+                                <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+                                    <h2 class="titulo">Nuevos estudios</h2>
+                                    <a class="enlace" id="ver_estudios">Ver todos (${estudiosNuevos.length})</a>
+                                </div>
+                            `;
+                            tarjetaEstudiosContainer.innerHTML += headerHTML;
+
+                            if (estudiosNuevos.length > 0) {
+                                estudiosNuevos.forEach(estudio => {
+                                    // Crear el elemento de la tarjeta de estudio
+                                    const estudioElement = document.createElement('div');
+                                    estudioElement.className = 'tarjeta-estudios';
+                                    estudioElement.innerHTML = `
+                                        <div>
+                                            <p class="texto">${estudio.Fecha.split('-').reverse().join('/')}</p>
+                                            <h3 class="subtitulo">${estudio.Titulo}</h3>
+                                        </div>
+                                        <button class="blue-button" onclick="window.open('${estudio.Link}', '_blank')">ABRIR</button>
+                                    `;
+                                    // Insertar el elemento creado en el contenedor
+                                    tarjetaEstudiosContainer.appendChild(estudioElement);
+                                });
+                            } else {
+                                // Mostrar mensaje predeterminado si no hay estudios nuevos
+                                tarjetaEstudiosContainer.innerHTML += `
+                                    <div class="tarjeta-estudios">
+                                        <div style="display: flex; align-items: center;">
+                                            <img src="./img/cruzar.png" style="width: 14px; height: 14px; margin: 0 10px 2px 0;">
+                                            <p class="texto">No posee nuevos estudios cargados.</p>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching estudios data:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('Error fetching last log data:', error);
+                });
+        
+            // Obtener los turnos en sala de espera
+            fetch(urlSalaEspera)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let turnosEnSalaEspera = [];
+                    if (data.length > 0) {
+                        let turno = data[0];
+                        turnosEnSalaEspera.push(turno.Fecha + 'T' + turno.Hora);
+    
+                        document.getElementById('pacientesEspera').textContent = turno.Pacientes_Espera;
+    
+                        const [year, month, day] = turno.Fecha.split('-');
+                        const formattedDate = `${day}/${month}/${year}`;
+    
+                        document.getElementById('nombreProfesional').textContent = turno.Profesional;
+                        document.getElementById('fechaTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${formattedDate}`;
+                        document.getElementById('horaTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${turno.Hora ? turno.Hora : 'null'}`;
+                        document.getElementById('sedeTurno').innerHTML = `<img src="./img/sede.png" style="width: 20px; margin-right: 5px;">${turno.Nombre_Sede}`;
+                        document.getElementById('direccionTurno').innerHTML = `<img src="./img/direccion.png" style="width: 20px; margin-right: 5px;">${turno.Direccion}`;
+    
+                        document.getElementById('sala_espera_inactiva').style.display = 'none';
+                        document.getElementById('sala_espera_activa').style.display = 'block';
+                    }
+    
+                    // Obtener los turnos programados para hoy
+                    fetch(urlTurnos)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const today = new Date();
+                            const turnosHoyContainer = document.getElementById('proximos-turnos-hoy');
+                            const proximoTurnoContainer = document.getElementById('proximoTurnoContainer');
+                            let hayTurnosHoy = false; 
+    
+                            // Filtrar y ordenar los turnos del día de hoy
+                            const turnosHoy = data.Turnos.filter(turno => {
+                                const fechaTurno = new Date(turno.Fecha + 'T' + turno.Hora);
+                                return fechaTurno.toDateString() === today.toDateString() && 
+                                    !turnosEnSalaEspera.includes(turno.Fecha + 'T' + turno.Hora);
+                            }).sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
+    
+                            turnosHoy.forEach((turno, index) => {
+                                hayTurnosHoy = true; 
+    
+                                const turnoCard = document.createElement('div');
+                                turnoCard.classList.add('tarjeta-turnos');
+                                turnoCard.style.margin = '1em';
+                                turnoCard.style.width = 'calc(100% - 2em)';
+                                turnoCard.id = `turno_${index + 1}`;
+    
+                                turnoCard.innerHTML = `
+                                    <div class="doctor-container">
+                                        <h3 id="doctorNombre_${index + 1}">${turno.Nombre_Prof}</h3>
+                                        <span class="icono-turnos-container">
+                                            <img id="iconoMas_${index + 1}" src="./img/mas.png" style="opacity: 0.6; width: 1em;">
+                                        </span>
+                                    </div>
+                                    <div class="container-fecha-hora-confirmacion">
+                                        <span class="container-icono-info" id="fechaTurno_${index + 1}">
+                                            <img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">
+                                            ${turno.Fecha.split('-').reverse().join('/')}
+                                        </span>
+                                        <span class="container-icono-info" id="horaTurno_${index + 1}">
+                                            <img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">
+                                            ${turno.Hora.slice(0, 5)} Hs
+                                        </span>
+                                        <span class="container-icono-info" id="estadoTurno_${index + 1}">
+                                            <span class="icono-dot" id="iconoDot_${index + 1}" style="background-color: ${turno.Estado_Confirmacion === 'Confirmado' ? '#2cc16d' : '#ff0000'};"></span>
+                                            ${turno.Estado_Confirmacion || 'Sin confirmar'}
+                                        </span>
+                                    </div>
+                                    <div class="container-buttons" id="containerButtons_${index + 1}">
+                                        <button class="gray-button" id="cancelarButton_${index + 1}">CANCELAR</button>
+                                        <button class="blue-button" id="confirmarButton_${index + 1}">CONFIRMAR</button>
+                                    </div>
+                                `;
+    
+                                turnosHoyContainer.appendChild(turnoCard);
+                            });
+    
+                            // Mostrar u ocultar contenedores según los turnos
+                            if (hayTurnosHoy) {
+                                turnosHoyContainer.style.display = 'block';
+                                proximoTurnoContainer.style.display = 'none'; // Ocultar próximo turno si hay turnos hoy
+                            } else {
+                                turnosHoyContainer.style.display = 'none';
+                                const proximoTurno = obtenerProximoTurno(data.Turnos);
+    
+                                if (proximoTurno) {
+                                    proximoTurnoContainer.style.display = 'block';
+                                    const fechaProximoTurno = new Date(proximoTurno.Fecha + 'T' + proximoTurno.Hora);
+                                    const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+                                    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+                                    const diaSemana = diasSemana[fechaProximoTurno.getDay()];
+                                    const diaMes = fechaProximoTurno.getDate();
+                                    const mes = fechaProximoTurno.getMonth();
+                                    const año = fechaProximoTurno.getFullYear();
+    
+                                    const fechaFormateada = `${diaSemana}, ${diaMes} de ${meses[mes]} ${año}`;
+    
+                                    document.getElementById('nombreProfesionalProximoTurno').textContent = proximoTurno.Nombre_Prof;
+                                    document.getElementById('fechaProximoTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${fechaFormateada}`;
+                                    document.getElementById('horaProximoTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${proximoTurno.Hora}`;
+                                    document.getElementById('infoExtraProximoTurno').innerHTML = `<img src="./img/clinic.png" style="width: 17px; margin: 0 7px 7px 2px;">${proximoTurno.Domicilio_Sede}<br>${proximoTurno.Detalles_Extra || ''}`;
+                                } else {
+                                    proximoTurnoContainer.style.display = 'none'; // Ocultar si no hay próximo turno
+                                }
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error fetching turnos data:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('Error fetching sala de espera data:', error);
+                });
+    
+            // Función para obtener el próximo turno más cercano
+            function obtenerProximoTurno(turnos) {
+                const fechaActual = new Date();
+                const turnosFuturos = turnos.filter(turno => new Date(turno.Fecha + 'T' + turno.Hora) > fechaActual);
+    
+                if (turnosFuturos.length === 0) {
+                    return null; // No hay turnos futuros
+                } else {
+                    turnosFuturos.sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
+                    return turnosFuturos[0]; // Devuelve el próximo turno
+                }
+            }
+    
+        
+            // Función para obtener las cookies
+            function getCookie(name) {
+                let value = "; " + document.cookie;
+                let parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+        });
+    
+        function mostrarInfo() {
+        document.getElementById('info-popup').style.display = 'block';
+        }
+    
+        function cerrarInfo() {
+            document.getElementById('info-popup').style.display = 'none';
+        }
+    
+    </script>        
+</body>
+</html>

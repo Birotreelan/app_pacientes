@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="icon" href="./img/logo3.ico" type="image/x-icon"> -->
+    <link rel="stylesheet" href="./login.css">
+    <script type="module" src="./Js/login.js"></script>
+    <title>Login - Portal de pacientes</title>
+</head>
+<body>
+    <span class="background-container">
+        <h1>Bienvenido a Tu Portal</h1>
+        <h3>¿En qué te podemos ayudar hoy?</h3>
+    </span>
+    <span class="login-big-container">
+        <span id="login_inicio" class="login-container">
+            <img class="logo" id="logo" src="./logos/Sede.png">
+            <div class="login-container-inputs">
+                <input id="dni" maxlength="8" minlength="8" id="dni" class="login-input" type="text" placeholder="Nº de documento">
+                <div class="container-password">
+                    <input id="password" type="password" placeholder="Contraseña">
+                    <img id="showhide_password">
+                </div>
+                <label class="login-check" for="login-checkbox">
+                    <input id="checkbox" name="login-checkbox" type="checkbox" checked>Recordar mis datos siempre
+                </label>
+            </div>
+            <button class="login-button" id="login_button">Ingresar</button>
+            <div id="password-incorrecta"></div>
+            <div class="question-container">
+                <a id="recover_password">Olvidé mi contraseña</a>
+                <a id="create_account">Crear nueva cuenta</a>
+                <a id="change_password">Cambiar contraseña</a>
+            </div>
+        </span>
+    </span>
+    <span id="login_recover" class="login-container" style="display: none;">
+        <span class="volver-inicio-button"><img style="width: 20px; margin: 0 10px 0 0; opacity: 0.9;" src="./img/flecha-hacia-atras.png">Volver</span>
+        <h2 id="login_recover_h1">Recuperación de contraseña</h2>
+        <p id="login_recover_p">Para recuperar la contraseña, ingresá Nº de documento y presioná 'Continuar'. Te enviaremos un email de recuperación.</p>
+        <div class="login-container-inputs">
+            <input id="input_recover_password" maxlength="10" minlength="8" class="login-input" type="text" placeholder="Nº de documento">
+        </div>
+        <button id="recover_password_button" class="login-button">Continuar</button>
+    </span>
+    <span id="login_create" class="login-container" style="display: none;">
+        <span class="volver-inicio-button"><img style="width: 20px; margin: 0 10px 0 0; opacity: 0.9;" src="./img/flecha-hacia-atras.png">Volver</span>
+        <h2>Crear nueva cuenta</h2>
+        <p>Para crear tu cuenta, completá todos los campos en el formulario y presioná 'Registrarme'.</p>
+        <div class="login-container-inputs">
+            <input class="login-input" type="text" placeholder="Nombre...">
+            <input class="login-input" type="text" placeholder="Apellido...">
+            <input class="login-input" type="number" placeholder="DNI...">
+            <input class="login-input" type="date">
+            <input class="login-input" type="email" placeholder="Mail...">
+            <div class="container-password">
+                <input id="input_password_createAccount" type="password" placeholder="Contraseña...">
+                <img id="showhide_inputPassword_createAccount">
+            </div>
+            <div class="container-password">
+                <input id="verify_password_createAccount" type="password" placeholder="Verificar Contraseña...">
+                <img id="showhide_verifyPassword_createAccount">
+            </div>
+        </div>
+        <button class="login-button" id="registrarme">Registrarme</button>
+    </span>
+    <span id="login_changePassword" class="login-container" style="display: none;">
+        <span class="volver-inicio-button"><img style="width: 20px; margin: 0 10px 0 0; opacity: 0.9;" src="./img/flecha-hacia-atras.png">Volver</span>
+        <h2>Cambiar contraseña</h2>
+        <p id="login_changePassword_p">Para cambiar la contraseña, completá todos los campos del formulario y presioná 'Continuar'. Te enviaremos un email de confirmación.</p>
+        <div class="login-container-inputs" id="login_container_inputs_changePassword">
+            <input id="input_dni_changePassword" maxlength="8" minlength="8" type="text" class="login-input" placeholder="Nº de documento">
+            <div class="container-password">
+                <input id="input_oldpassword_changePassword" type="password" placeholder="Contraseña actual...">
+                <img id="showhide_inputPassword_changePassword" src="./img/hide.png">
+            </div>
+            <div class="container-password">
+                <input id="new_password_changePassword" type="password" placeholder="Nueva contraseña...">
+                <img id="showhide_newPassword_changePassword" src="./img/hide.png">
+            </div>
+            <div class="container-password">
+                <input id="verify_password_changePassword" type="password" placeholder="Verificar nueva contraseña...">
+                <img id="showhide_verifyPassword_changePassword" src="./img/hide.png">
+            </div>
+        </div>
+        <button id="change_password_button" class="login-button">Continuar</button>
+    </span>
+    <script src="./cFunctions.js"></script>
+</body>
+</html>

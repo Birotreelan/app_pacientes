@@ -1,0 +1,4 @@
+RewriteEngine on
+RewriteCond %{REQUEST_URI} !^/index.html$
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . /biro/App_Charles/ [R=302,L]

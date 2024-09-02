@@ -1,0 +1,271 @@
+/* ===== Google Font Import - Poppins ===== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.4s ease;
+}
+
+.dot-notificacion {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    border-radius: 100%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+}
+
+.titulo {
+    width: fit-content;
+    color: black;
+    font-weight: 600;
+    font-size: 22px;
+    margin: 0 0 0 1em;
+    text-wrap: nowrap;
+}
+
+.subtitulo {
+    font-size: 18px;
+    margin-bottom: 0;
+}
+
+.tarjetas-container {
+    width: calc(100% - 2em);
+    height: fit-content;
+    padding: 1em 1em 2em 1em;
+    margin: 0.5em 1em;
+    border: 1px solid rgba(211, 211, 211, 0.39);
+    border-radius: 5px;
+    background-color: rgba(239, 239, 239, 0.2);
+    box-shadow: 0 2px 8px rgb(44, 193, 109, 0.4);
+}
+
+.tarjeta-home-sala-espera {
+    width: calc(100% - 2em);
+    height: fit-content;
+    margin: 2em 1em 1em 1em;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dot-texto-sala-espera {
+    display: flex;
+    align-items: center;
+}
+
+.tarjeta-estudios {
+    width: calc(100% - 2em);
+    height: fit-content;
+    margin: 1em;
+    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-turnos {
+    width: 100%;
+    height: fit-content;
+    margin: 0 0 1em 0;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid rgba(211, 211, 211, 0.5);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.doctor-container {
+    width: 100%;
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-bottom: 1px solid lightgrey;
+}
+
+.container-fecha-hora-confirmacion {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    color: gray;
+    font-size: 14px;
+    margin-top: 1em;
+}
+
+.container-icono-info {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: gray;
+    margin-bottom: 1em;
+}
+
+.icono-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background-color: #2196F3;
+    margin-right: 5px;
+}
+
+.container-buttons {
+    width: 100%;
+    height: 3em;
+    margin: 5px 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.gray-button {
+    width: fit-content;
+    height: 3em;
+    padding: 0 2em;
+    background-color: #F8F8F8;
+    color: #B9B9B9;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.blue-button {
+    width: fit-content;
+    height: 3em;
+    padding: 0 2em;
+    background-color: #E5F3FF;
+    color: #4CA7FC;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.big-blue-button {
+    width: 90%;
+    height: 3em;
+    padding: 0 2em;
+    margin: 10px 5%;
+    background-color: #1285FE;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.enlace {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    height: 2em;
+    margin: 1em 1em 0 0;
+    padding: 0 1em 0 0;
+    color: #1285FE;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.texto {
+    color: gray;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.tarjeta-home-sala-espera {
+    width: 100%;
+    height: fit-content;
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border: 1px solid rgba(44, 193, 109, 0.3);
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgb(44, 193, 109, 0.2);
+}
+
+.container-items-sala-espera {
+    width: 100%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-item-sala-espera {
+    width: calc(100% - 2em);
+    height: fit-content;
+    padding: 1em;
+    margin: 0.5em 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.codigo-sala-espera {
+    color: #2cc16d;
+    font-size: 46px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-icon {
+    display: inline-block;
+    margin-left: 0.5em;
+    background-color: #e7e7e7;
+    color: #000;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.info-popup {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 1em;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
