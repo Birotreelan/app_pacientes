@@ -43,10 +43,10 @@
     height: fit-content;
     padding: 1em 1em 2em 1em;
     margin: 0.5em 1em;
-    border: 1px solid rgba(211, 211, 211, 0.39);
+    border: 1px solid lightgray;
     border-radius: 5px;
     background-color: rgba(239, 239, 239, 0.2);
-    box-shadow: 0 2px 8px rgb(44, 193, 109, 0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .tarjeta-home-sala-espera {

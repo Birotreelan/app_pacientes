@@ -1,4 +1,5 @@
 import { logOffCookies, checkLogIn, cookies } from "./cFunctions.js";
+import { aside } from "./aside.js";
 import { miPerfil } from './perfil.js';
 import { misTurnos } from './turnos.js';
 import { nuevoTurno } from './nuevoTurno.js';
@@ -155,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Cargar todas las pestañas
+    aside();
     miPerfil();
     misTurnos();
     nuevoTurno();
