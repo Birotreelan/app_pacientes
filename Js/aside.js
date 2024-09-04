@@ -29,7 +29,7 @@ function obtenerEstudios(urlEstudios, ultimoLogTimestamp) {
     fetch(urlEstudios)
         .then(response => response.json())
         .then(dataEstudios => {
-            const totalEstudios = dataEstudios.Estudios.length; // Total de estudios
+            const totalEstudios = dataEstudios.Estudios.length;
             const estudiosNuevos = filtrarEstudiosNuevos(dataEstudios.Estudios, ultimoLogTimestamp);
             mostrarEstudiosNuevos(estudiosNuevos, totalEstudios);
         })
@@ -49,7 +49,6 @@ function filtrarEstudiosNuevos(estudios, ultimoLogTimestamp) {
 function mostrarEstudiosNuevos(estudiosNuevos, totalEstudios) {
     const tarjetaEstudiosContainer = document.getElementById('tarjetaEstudiosContainer');
 
-    // Mostrar el contenedor solo si hay estudios nuevos
     if (estudiosNuevos.length > 0) {
         tarjetaEstudiosContainer.style.display = 'block';
         tarjetaEstudiosContainer.innerHTML = '';
@@ -57,7 +56,7 @@ function mostrarEstudiosNuevos(estudiosNuevos, totalEstudios) {
         const headerHTML = `
             <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
                 <h2 class="titulo">Nuevos estudios</h2>
-                <a class="enlace" id="ver_estudios">Ver todos (${totalEstudios})</a> <!-- Muestra el total de estudios -->
+                <a class="enlace" id="ver_estudios">Ver todos (${totalEstudios})</a>
             </div>
         `;
         tarjetaEstudiosContainer.innerHTML += headerHTML;
@@ -74,8 +73,14 @@ function mostrarEstudiosNuevos(estudiosNuevos, totalEstudios) {
             `;
             tarjetaEstudiosContainer.appendChild(estudioElement);
         });
+
+        const verEstudiosButton = document.getElementById('ver_estudios');
+        verEstudiosButton.addEventListener('click', () => {
+            const event = new CustomEvent('openMisEstudios');
+            document.dispatchEvent(event);
+        });
+
     } else {
-        // Ocultar el contenedor si no hay estudios nuevos
         tarjetaEstudiosContainer.style.display = 'none';
     }
 }
@@ -127,6 +132,13 @@ function mostrarTurnosHoy(turnos) {
         return fechaTurno.toDateString() === today.toDateString();
     }).sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
 
+    const turnosFuturos = turnos.filter(turno => {
+        const fechaTurno = new Date(turno.Fecha + 'T' + turno.Hora);
+        return fechaTurno >= today;
+    });
+
+    const cantidadTurnosFuturos = turnosFuturos.length;
+
     if (turnosHoy.length > 0) {
         turnosHoyContainer.style.display = 'block';
         turnosHoy.forEach((turno, index) => {
@@ -149,10 +161,55 @@ function mostrarTurnosHoy(turnos) {
             `;
             turnosHoyContainer.appendChild(turnoCard);
         });
+
         proximoTurnoContainer.style.display = 'none';
     } else {
         turnosHoyContainer.style.display = 'none';
-        proximoTurnoContainer.style.display = 'block';
+        const proximoTurno = obtenerProximoTurno(turnos);
+
+        if (proximoTurno) {
+            proximoTurnoContainer.style.display = 'block';
+            const fechaProximoTurno = new Date(proximoTurno.Fecha + 'T' + proximoTurno.Hora);
+            const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            const diaSemana = diasSemana[fechaProximoTurno.getDay()];
+            const diaMes = fechaProximoTurno.getDate();
+            const mes = fechaProximoTurno.getMonth();
+            const año = fechaProximoTurno.getFullYear();
+
+            const fechaFormateada = `${diaSemana}, ${diaMes} de ${meses[mes]} ${año}`;
+
+            document.getElementById('nombreProfesionalProximoTurno').textContent = proximoTurno.Nombre_Prof;
+            document.getElementById('fechaProximoTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${fechaFormateada}`;
+            document.getElementById('horaProximoTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${proximoTurno.Hora}`;
+            document.getElementById('infoExtraProximoTurno').innerHTML = `<img src="./img/clinic.png" style="width: 17px; margin: 0 7px 7px 2px;">${proximoTurno.Domicilio_Sede}<br>${proximoTurno.Detalles_Extra || ''}`;
+        } else {
+            proximoTurnoContainer.style.display = 'none';
+        }
+    }
+
+    // Actualizar el texto del botón "Ver todos" con la cantidad de turnos futuros
+    const verTurnosButton = document.getElementById('ver_turnos');
+    console.log(verTurnosButton); // Verifica si el botón existe
+    if (verTurnosButton) {
+        verTurnosButton.textContent = `Ver todos (${cantidadTurnosFuturos})`; // Actualizar con el número de turnos futuros
+        verTurnosButton.addEventListener('click', () => {
+            const event = new CustomEvent('openMisTurnos');
+            document.dispatchEvent(event);
+        });
+    }
+}
+
+// Función para obtener el próximo turno más cercano
+function obtenerProximoTurno(turnos) {
+    const fechaActual = new Date();
+    const turnosFuturos = turnos.filter(turno => new Date(turno.Fecha + 'T' + turno.Hora) > fechaActual);
+
+    if (turnosFuturos.length === 0) {
+        return null; // No hay turnos futuros
+    } else {
+        turnosFuturos.sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
+        return turnosFuturos[0]; // Devuelve el próximo turno
     }
 }
 
