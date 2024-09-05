@@ -11,6 +11,7 @@ export function aside() {
 
     obtenerUltimoLog(urlUltimoLog, urlEstudios);
     obtenerTurnosEnSalaEspera(urlSalaEspera, urlTurnos);
+    obtenerTurnosHoy(urlTurnos);
 }
 
 // Función para obtener el último log del paciente
@@ -85,30 +86,78 @@ function mostrarEstudiosNuevos(estudiosNuevos, totalEstudios) {
     }
 }
 
+// Función para obtener todos los turnos del paciente
+function obtenerTodosLosTurnos(urlTurnos, callback) {
+    fetch(urlTurnos)
+        .then(response => response.json())
+        .then(data => {
+            const turnos = data.Turnos || [];
+            callback(turnos); // Llama a la función callback con los turnos obtenidos
+        })
+        .catch(error => console.error('Error fetching turnos data:', error));
+}
+
 // Función para obtener los turnos en sala de espera
 function obtenerTurnosEnSalaEspera(urlSalaEspera, urlTurnos) {
     fetch(urlSalaEspera)
         .then(response => response.json())
         .then(data => {
-            mostrarTurnosEnSalaEspera(data);
-            obtenerTurnosHoy(urlTurnos);
+            mostrarTurnosEnSalaEspera(data, urlTurnos);
         })
         .catch(error => console.error('Error fetching sala de espera data:', error));
 }
 
 // Función para mostrar turnos en sala de espera
-function mostrarTurnosEnSalaEspera(data) {
-    if (data.length > 0) {
-        let turno = data[0];
+function mostrarTurnosEnSalaEspera(data, urlTurnos) {
+    if (data.Turnos && data.Turnos.length > 0) {
+        let turno = data.Turnos[0];
+        const fechaFormateada = formatearFecha(turno.Fecha);
+        const horaFormateada = formatearHora(turno.Hora);
+
         document.getElementById('pacientesEspera').textContent = turno.Pacientes_Espera;
         document.getElementById('nombreProfesional').textContent = turno.Profesional;
-        document.getElementById('fechaTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${turno.Fecha.split('-').reverse().join('/')}`;
-        document.getElementById('horaTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${turno.Hora}`;
+        document.getElementById('fechaTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${fechaFormateada}`;
+        document.getElementById('horaTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${horaFormateada}`;
         document.getElementById('sedeTurno').innerHTML = `<img src="./img/sede.png" style="width: 20px; margin-right: 5px;">${turno.Nombre_Sede}`;
         document.getElementById('direccionTurno').innerHTML = `<img src="./img/direccion.png" style="width: 20px; margin-right: 5px;">${turno.Direccion}`;
         document.getElementById('sala_espera_inactiva').style.display = 'none';
         document.getElementById('sala_espera_activa').style.display = 'block';
+    } else {
+        // No hay turnos en sala de espera, buscar el próximo turno más cercano
+        obtenerTodosLosTurnos(urlTurnos, (turnos) => {
+            const proximoTurno = obtenerProximoTurno(turnos);
+            if (proximoTurno) {
+                const fechaFormateada = formatearFecha(proximoTurno.Fecha);
+                const horaFormateada = formatearHora(proximoTurno.Hora);
+                const mensajeProximoTurno = `Programada para el día ${fechaFormateada} a las ${horaFormateada}`;
+                document.querySelector('#sala_espera_inactiva p').textContent = mensajeProximoTurno;
+            } else {
+                // Si no hay turnos futuros, mantener el mensaje por defecto
+                document.querySelector('#sala_espera_inactiva p').textContent = 'No hay turnos programados.';
+            }
+
+            document.getElementById('sala_espera_inactiva').style.display = 'block';
+            document.getElementById('sala_espera_activa').style.display = 'none';
+        });
     }
+}
+
+// Funciones para formatear la fecha y la hora en el formato requerido
+function formatearFecha(fecha) {
+    const fechaTurno = new Date(fecha);
+    const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+    const diaSemana = diasSemana[fechaTurno.getDay()];
+    const diaMes = fechaTurno.getDate();
+    const mes = meses[fechaTurno.getMonth()];
+    const año = fechaTurno.getFullYear();
+
+    return `${diaSemana} ${diaMes} de ${mes}, ${año}`;
+}
+
+function formatearHora(hora) {
+    const [horas, minutos] = hora.split(':');
+    return `${horas}:${minutos} Hs`;
 }
 
 // Función para obtener los turnos del día de hoy
@@ -127,21 +176,26 @@ function mostrarTurnosHoy(turnos) {
     const turnosHoyContainer = document.getElementById('proximos-turnos-hoy');
     const proximoTurnoContainer = document.getElementById('proximoTurnoContainer');
 
+    // Filtra los turnos que son del día de hoy
     const turnosHoy = turnos.filter(turno => {
         const fechaTurno = new Date(turno.Fecha + 'T' + turno.Hora);
         return fechaTurno.toDateString() === today.toDateString();
     }).sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
 
+    // Filtra los turnos futuros
     const turnosFuturos = turnos.filter(turno => {
         const fechaTurno = new Date(turno.Fecha + 'T' + turno.Hora);
         return fechaTurno >= today;
-    });
+    }).sort((a, b) => new Date(a.Fecha + 'T' + a.Hora) - new Date(b.Fecha + 'T' + b.Hora));
 
     const cantidadTurnosFuturos = turnosFuturos.length;
 
     if (turnosHoy.length > 0) {
+        // Mostrar turnos de hoy
         turnosHoyContainer.style.display = 'block';
-        turnosHoy.forEach((turno, index) => {
+        turnosHoyContainer.innerHTML = ''; // Limpiar contenido previo
+
+        turnosHoy.forEach((turno) => {
             const turnoCard = document.createElement('div');
             turnoCard.classList.add('tarjeta-turnos');
             turnoCard.innerHTML = `
@@ -150,8 +204,8 @@ function mostrarTurnosHoy(turnos) {
                     <span class="icono-turnos-container"><img src="./img/mas.png" style="opacity: 0.6; width: 1em;"></span>
                 </div>
                 <div class="container-fecha-hora-confirmacion">
-                    <span>${turno.Fecha.split('-').reverse().join('/')}</span>
-                    <span>${turno.Hora.slice(0, 5)} Hs</span>
+                    <span>${formatearFecha(turno.Fecha)}</span>
+                    <span>${formatearHora(turno.Hora)}</span>
                     <span>${turno.Estado_Confirmacion || 'Sin confirmar'}</span>
                 </div>
                 <div class="container-buttons">
@@ -162,35 +216,29 @@ function mostrarTurnosHoy(turnos) {
             turnosHoyContainer.appendChild(turnoCard);
         });
 
-        proximoTurnoContainer.style.display = 'none';
+        proximoTurnoContainer.style.display = 'none'; // Ocultar próximo turno si hay turnos hoy
     } else {
+        // No hay turnos hoy, mostrar el próximo turno
         turnosHoyContainer.style.display = 'none';
-        const proximoTurno = obtenerProximoTurno(turnos);
+
+        const proximoTurno = turnosFuturos.length > 0 ? turnosFuturos[0] : null; // Obtener el próximo turno
 
         if (proximoTurno) {
             proximoTurnoContainer.style.display = 'block';
-            const fechaProximoTurno = new Date(proximoTurno.Fecha + 'T' + proximoTurno.Hora);
-            const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-            const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-            const diaSemana = diasSemana[fechaProximoTurno.getDay()];
-            const diaMes = fechaProximoTurno.getDate();
-            const mes = fechaProximoTurno.getMonth();
-            const año = fechaProximoTurno.getFullYear();
-
-            const fechaFormateada = `${diaSemana}, ${diaMes} de ${meses[mes]} ${año}`;
+            const fechaFormateada = formatearFecha(proximoTurno.Fecha);
+            const horaFormateada = formatearHora(proximoTurno.Hora);
 
             document.getElementById('nombreProfesionalProximoTurno').textContent = proximoTurno.Nombre_Prof;
             document.getElementById('fechaProximoTurno').innerHTML = `<img src="./img/calendario.png" style="width: 20px; margin-right: 5px;">${fechaFormateada}`;
-            document.getElementById('horaProximoTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${proximoTurno.Hora}`;
+            document.getElementById('horaProximoTurno').innerHTML = `<img src="./img/reloj.png" style="width: 16px; margin-right: 5px;">${horaFormateada}`;
             document.getElementById('infoExtraProximoTurno').innerHTML = `<img src="./img/clinic.png" style="width: 17px; margin: 0 7px 7px 2px;">${proximoTurno.Domicilio_Sede}<br>${proximoTurno.Detalles_Extra || ''}`;
         } else {
-            proximoTurnoContainer.style.display = 'none';
+            proximoTurnoContainer.style.display = 'none'; // No hay turnos futuros para mostrar
         }
     }
 
     // Actualizar el texto del botón "Ver todos" con la cantidad de turnos futuros
     const verTurnosButton = document.getElementById('ver_turnos');
-    console.log(verTurnosButton); // Verifica si el botón existe
     if (verTurnosButton) {
         verTurnosButton.textContent = `Ver todos (${cantidadTurnosFuturos})`; // Actualizar con el número de turnos futuros
         verTurnosButton.addEventListener('click', () => {
